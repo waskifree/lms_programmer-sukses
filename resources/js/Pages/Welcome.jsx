@@ -3,70 +3,133 @@ import { Head, Link } from "@inertiajs/react";
 export default function Welcome({ auth }) {
     return (
         <>
-            <Head title="Welcome" className="bg-gray-100" />
-            <div>
-                <header className="flex items-center justify-between bg-blue-100 px-6 py-4">
-                    <a className="justify-start text-lg font-bold" href="#">
-                        ProgrammerSukses
+            <Head title="MindFeed" />
+
+            <div
+                className="min-h-screen"
+                style={{ backgroundColor: "#222831" }}
+            >
+                {/* Header */}
+                <header
+                    className="flex items-center justify-between px-6 py-5 border-b border-white/10"
+                    style={{ backgroundColor: "#222831" }}
+                >
+                    <a
+                        href="#"
+                        className="text-white text-2xl font-bold tracking-tight"
+                    >
+                        mindfeed.
                     </a>
+
                     <div className="flex items-center space-x-4">
                         {auth.user ? (
                             <Link
                                 href={route("dashboard")}
-                                className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+                                className="rounded-full px-5 py-2.5 text-white font-medium hover:bg-white/10 transition"
                             >
-                                Dashboard
+                                Masuk ke Feed
                             </Link>
                         ) : (
                             <>
                                 <Link
                                     href={route("login")}
-                                    className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+                                    className="rounded-full px-5 py-2.5 text-white font-medium hover:bg-white/10 transition"
                                 >
                                     Log in
                                 </Link>
                                 <Link
                                     href={route("register")}
-                                    className="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+                                    className="rounded-full px-6 py-2.5 bg-blue text-[#0f172a] font-semibold transition-all duration-300 
+            hover:brightness-125 hover:scale-105 
+            hover:shadow-[0_0_25px_-5px] hover:shadow-[#D552A3]"
                                 >
-                                    Register
+                                    Daftar Gratis
                                 </Link>
                             </>
                         )}
                     </div>
                 </header>
 
-                <main className="mt-6 mb-6 px-6 py-4">
-                    <div className="container container h-full py-24 content-center mx-auto max-w-4xl text-center">
-                        <h1 className="text-3xl font-bold">
-                            Welcome to ProgrammerSukses
-                        </h1>
-                        <p className="mt-4">
-                            Join our community of developers and start your
-                            journey to becoming a better programmer!
-                        </p>
-                    </div>
+                {/* Hero Section */}
+                <main className="flex items-center justify-center min-h-[calc(100vh-80px)] px-6 py-12">
+                    <div className="max-w-4xl mx-auto text-center">
+                        {/* Logo */}
+                        {/* <img
+                            src="/logo/mindfeed-logo.png"
+                            alt="MindFeed"
+                            className="mx-auto mb-10 w-80 md:w-96"
+                        /> */}
 
-                    <div className="flex">
-                        <div className="w-1/2 p-4">
-                            <h2 className="text-2xl font-bold">Learn</h2>
-                            <p className="mt-2">
-                                Access a wide range of tutorials, articles, and
-                                resources to enhance your programming skills.
-                            </p>
-                        </div>
-                        <div className="w-1/2 p-4">
-                            <h2 className="text-2xl font-bold">Connect</h2>
-                            <p className="mt-2">
-                                Join discussions, ask questions, and connect
-                                with other developers in our vibrant community.
-                            </p>
+                        <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight">
+                            Feed Your Mind
+                        </h1>
+
+                        <p className="text-xl md:text-xl text-slate-300 mb-10 max-w-2xl mx-auto">
+                            Platform untuk belajar, ide, pemikiran, cerita, dan
+                            pengalaman
+                            <br />
+                            berbasis teks yang sederhana dan bermakna.
+                        </p>
+
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                            <Link
+                                href={route("register")}
+                                className="px-8 py-4 rounded-full bg-green transition-all duration-300 
+            hover:brightness-125 hover:scale-105 
+            hover:shadow-[0_0_25px_-5px] hover:shadow-[#A4DD00] text-[#0f172a] font-semibold transition"
+                            >
+                                Mulai Menulis Sekarang
+                            </Link>
+
+                            <Link
+                                href="#learn-more"
+                                className="px-8 py-4 rounded-full border border-white/30 text-white font-medium hover:bg-white/10 transition"
+                            >
+                                Pelajari Lebih Lanjut
+                            </Link>
                         </div>
                     </div>
                 </main>
 
-                <footer className="mt-6 px-6 py-4 text-center text-sm text-gray-500">
-                    <p>&copy; 2023 ProgrammerSukses. All rights reserved.</p>
+                {/* Simple Features */}
+                <div
+                    className="py-16 px-6 border-t border-white/10"
+                    style={{ backgroundColor: "#313647" }}
+                >
+                    <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-8 text-center">
+                        <div className="p-6">
+                            <h3 className="text-2xl font-semibold text-white mb-3">
+                                Tulis Bebas
+                            </h3>
+                            <p className="text-slate-400">
+                                Bagikan title, deskripsi, dan isi konten teks
+                                tanpa batas.
+                            </p>
+                        </div>
+                        <div className="p-6">
+                            <h3 className="text-2xl font-semibold text-white mb-3">
+                                Interaksi
+                            </h3>
+                            <p className="text-slate-400">
+                                Like, komentar, dan terhubung dengan pemikiran
+                                orang lain.
+                            </p>
+                        </div>
+                        <div className="p-6">
+                            <h3 className="text-2xl font-semibold text-white mb-3">
+                                Komunitas
+                            </h3>
+                            <p className="text-slate-400">
+                                Bangun komunitas berdasarkan ide dan minat yang
+                                sama.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Footer */}
+                <footer className="py-8 text-center text-slate-500 text-sm border-t border-white/10">
+                    <p>© 2026 MindFeed. All rights reserved.</p>
                 </footer>
             </div>
         </>

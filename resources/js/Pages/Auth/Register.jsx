@@ -1,23 +1,30 @@
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import InputError from "@/Components/InputError";
+import InputLabel from "@/Components/InputLabel";
+import PrimaryButton from "@/Components/PrimaryButton";
+import TextInput from "@/Components/TextInput";
+import GuestLayout from "@/Layouts/GuestLayout";
+import { Head, Link, useForm } from "@inertiajs/react";
+import { use } from "react";
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
-        name: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
+        name: "",
+        username: "",
+        email: "",
+        password: "",
+        password_confirmation: "",
     });
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
     const submit = (e) => {
         e.preventDefault();
 
-        post(route('register'), {
-            onFinish: () => reset('password', 'password_confirmation'),
+        post(route("register"), {
+            onFinish: () => reset("password", "password_confirmation"),
         });
     };
 
@@ -25,76 +32,163 @@ export default function Register() {
         <GuestLayout>
             <Head title="Register" />
 
-            <form onSubmit={submit}>
+            <div>
+                <div className="w-full max-w-md">
+                    {/* Logo */}
+                    <div className="text-center mb-10">
+                        {/* <img
+                            src="/logo/mindfeed-logo.png"
+                            alt="MindFeed"
+                            className="mx-auto w-52 mb-6"
+                        /> */}
+
+                        <h1 className="text-3xl font-bold text-white">
+                            Register
+                        </h1>
+                        <p className="text-slate-400 mt-2">
+                            Daftar akun MindFeed kamu
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <form onSubmit={submit} className="text-white">
                 <div>
-                    <InputLabel htmlFor="name" value="Name" />
+                    <InputLabel
+                        className="text-white"
+                        htmlFor="name"
+                        value="Name"
+                    />
 
                     <TextInput
                         id="name"
                         name="name"
                         value={data.name}
-                        className="mt-1 block w-full"
+                        className="mt-1 block w-full bg-[#222831] border-slate-700 text-white focus:border-[#A4DD00] focus:ring-[#A4DD00]"
                         autoComplete="name"
                         isFocused={true}
-                        onChange={(e) => setData('name', e.target.value)}
+                        onChange={(e) => setData("name", e.target.value)}
                         required
                     />
 
                     <InputError message={errors.name} className="mt-2" />
                 </div>
+                <div className="mt-2">
+                    <InputLabel
+                        className="text-white"
+                        htmlFor="username"
+                        value="Username"
+                    />
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="email" value="Email" />
+                    <TextInput
+                        id="username"
+                        name="username"
+                        value={data.username}
+                        className="mt-1 block w-full bg-[#222831] border-slate-700 text-white focus:border-[#A4DD00] focus:ring-[#A4DD00]"
+                        autoComplete="username"
+                        isFocused={true}
+                        onChange={(e) => setData("username", e.target.value)}
+                        required
+                    />
+
+                    <InputError message={errors.username} className="mt-2" />
+                </div>
+
+                <div className="mt-2">
+                    <InputLabel
+                        className="text-white"
+                        htmlFor="email"
+                        value="Email"
+                    />
 
                     <TextInput
                         id="email"
                         type="email"
                         name="email"
                         value={data.email}
-                        className="mt-1 block w-full"
+                        className="mt-1 block w-full bg-[#222831] border-slate-700 text-white focus:border-[#A4DD00] focus:ring-[#A4DD00]"
                         autoComplete="username"
-                        onChange={(e) => setData('email', e.target.value)}
+                        onChange={(e) => setData("email", e.target.value)}
                         required
                     />
 
                     <InputError message={errors.email} className="mt-2" />
                 </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                        required
+                <div className="mt-2">
+                    <InputLabel
+                        className="text-white"
+                        htmlFor="password"
+                        value="Password"
                     />
+
+                    <div className="relative">
+                        <TextInput
+                            id="password"
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            value={data.password}
+                            className="mt-1 block w-full bg-[#222831] border-slate-700 text-white focus:border-[#A4DD00] focus:ring-[#A4DD00] pr-10"
+                            autoComplete="new-password"
+                            onChange={(e) =>
+                                setData("password", e.target.value)
+                            }
+                            required
+                        />
+
+                        {/* Toggle Button */}
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+                        >
+                            {showPassword ? (
+                                <EyeOff size={20} />
+                            ) : (
+                                <Eye size={20} />
+                            )}
+                        </button>
+                    </div>
 
                     <InputError message={errors.password} className="mt-2" />
                 </div>
 
-                <div className="mt-4">
+                <div className="mt-2">
                     <InputLabel
+                        className="text-white"
                         htmlFor="password_confirmation"
                         value="Confirm Password"
                     />
 
-                    <TextInput
-                        id="password_confirmation"
-                        type="password"
-                        name="password_confirmation"
-                        value={data.password_confirmation}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) =>
-                            setData('password_confirmation', e.target.value)
-                        }
-                        required
-                    />
+                    <div className="relative">
+                        <TextInput
+                            id="password_confirmation"
+                            type={showPasswordConfirm ? "text" : "password"}
+                            name="password_confirmation"
+                            value={data.password_confirmation}
+                            className="mt-1 block w-full bg-[#222831] border-slate-700 text-white focus:border-[#A4DD00] focus:ring-[#A4DD00] pr-10"
+                            autoComplete="new-password"
+                            onChange={(e) =>
+                                setData("password_confirmation", e.target.value)
+                            }
+                            required
+                        />
+
+                        {/* Toggle Button */}
+                        <button
+                            type="button"
+                            onClick={() =>
+                                setShowPasswordConfirm(!showPasswordConfirm)
+                            }
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+                        >
+                            {showPasswordConfirm ? (
+                                <EyeOff size={20} />
+                            ) : (
+                                <Eye size={20} />
+                            )}
+                        </button>
+                    </div>
 
                     <InputError
                         message={errors.password_confirmation}
@@ -102,15 +196,18 @@ export default function Register() {
                     />
                 </div>
 
-                <div className="mt-4 flex items-center justify-end">
+                <div className="mt-6 flex items-center justify-end">
                     <Link
-                        href={route('login')}
-                        className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        href={route("login")}
+                        className="rounded-md text-sm text-slate-400 hover:brightness-125"
                     >
                         Already registered?
                     </Link>
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
+                    <PrimaryButton
+                        className="ms-4 bg-blue hover:text-green transition"
+                        disabled={processing}
+                    >
                         Register
                     </PrimaryButton>
                 </div>
