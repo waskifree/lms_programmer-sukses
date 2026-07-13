@@ -8,6 +8,7 @@ export default function Edit({ content, categories }) {
         paragraph: content.paragraph || "",
         type: content.type || "text",
         category_id: content.category_id || "",
+        visibility: content.visibility || "public", // ← Tambahan
     });
 
     const handleSubmit = (e) => {
@@ -15,20 +16,87 @@ export default function Edit({ content, categories }) {
         put(route("mycontent.update", content.slug));
     };
 
+    const visibilityOptions = [
+        {
+            value: "public",
+            label: "Public",
+            desc: "Semua orang bisa melihat",
+            icon: "🌍",
+        },
+        {
+            value: "followers",
+            label: "Hanya Followers",
+            desc: "Hanya pengikutmu yang bisa melihat",
+            icon: "👥",
+        },
+        {
+            value: "private",
+            label: "Private",
+            desc: "Hanya kamu yang bisa melihat (Notes)",
+            icon: "🔒",
+        },
+    ];
+
     return (
         <AuthenticatedLayout>
             <Head title={`Edit: ${content.title}`} />
 
-            <div className="py-6">
-                <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
-                    <h2 className="text-2xl font-bold mb-6">Edit Konten</h2>
+            <div className="py-10 min-h-screen">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="mb-8">
+                        <h2 className="text-3xl font-bold text-white">
+                            Edit Konten
+                        </h2>
+                        <p className="text-gray-400 mt-1">
+                            Perbarui informasi konten kamu
+                        </p>
+                    </div>
 
                     <form
                         onSubmit={handleSubmit}
-                        className="bg-white shadow-sm rounded-lg p-6 space-y-6"
+                        className="bg-warm-black border border-gray-700 rounded-3xl p-8 shadow-2xl"
                     >
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {/* === VISIBILITY === */}
+                        <div className="mb-8">
+                            <label className="block text-sm font-semibold text-gray-300 mb-3">
+                                Visibilitas Konten
+                            </label>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                {visibilityOptions.map((option) => (
+                                    <button
+                                        key={option.value}
+                                        type="button"
+                                        onClick={() =>
+                                            setData("visibility", option.value)
+                                        }
+                                        className={`p-6 rounded-2xl border-2 transition-all text-left ${
+                                            data.visibility === option.value
+                                                ? "border-emerald-500 bg-emerald-500/10"
+                                                : "border-gray-700 hover:border-gray-600 bg-gray-900"
+                                        }`}
+                                    >
+                                        <div className="text-3xl mb-3">
+                                            {option.icon}
+                                        </div>
+                                        <h3 className="font-semibold text-white">
+                                            {option.label}
+                                        </h3>
+                                        <p className="text-gray-400 text-sm mt-1">
+                                            {option.desc}
+                                        </p>
+                                    </button>
+                                ))}
+                            </div>
+                            {errors.visibility && (
+                                <p className="text-red-400 text-sm mt-2">
+                                    {errors.visibility}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Judul */}
+                        <div className="mb-6">
+                            <label className="block text-sm font-semibold text-gray-300 mb-2">
                                 Judul Konten
                             </label>
                             <input
@@ -37,87 +105,96 @@ export default function Edit({ content, categories }) {
                                 onChange={(e) =>
                                     setData("title", e.target.value)
                                 }
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2"
+                                className="w-full bg-gray-950 border border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 text-white rounded-2xl px-6 py-4 transition-all placeholder-gray-400"
+                                placeholder="Masukkan judul konten..."
                             />
                             {errors.title && (
-                                <p className="text-red-500 text-sm mt-1">
+                                <p className="text-red-400 text-sm mt-2">
                                     {errors.title}
                                 </p>
                             )}
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Deskripsi
+                        {/* Deskripsi */}
+                        <div className="mb-6">
+                            <label className="block text-sm font-semibold text-gray-300 mb-2">
+                                Deskripsi Singkat
                             </label>
                             <textarea
                                 value={data.description}
                                 onChange={(e) =>
                                     setData("description", e.target.value)
                                 }
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2 h-24"
+                                className="w-full bg-gray-950 border border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 text-white rounded-2xl px-6 py-4 h-28 transition-all placeholder-gray-400"
+                                placeholder="Deskripsi singkat tentang konten..."
                             />
+                            {errors.description && (
+                                <p className="text-red-400 text-sm mt-2">
+                                    {errors.description}
+                                </p>
+                            )}
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Isi Konten
+                        {/* Isi Konten */}
+                        <div className="mb-6">
+                            <label className="block text-sm font-semibold text-gray-300 mb-2">
+                                Isi Konten Lengkap
                             </label>
                             <textarea
                                 value={data.paragraph}
                                 onChange={(e) =>
                                     setData("paragraph", e.target.value)
                                 }
-                                className="w-full border border-gray-300 rounded-lg px-4 py-2 h-48"
+                                className="w-full bg-gray-950 border border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 text-white rounded-2xl px-6 py-4 h-64 transition-all placeholder-gray-400"
+                                placeholder="Tulis isi konten lengkap di sini..."
                             />
                             {errors.paragraph && (
-                                <p className="text-red-500 text-sm mt-1">
+                                <p className="text-red-400 text-sm mt-2">
                                     {errors.paragraph}
                                 </p>
                             )}
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-medium mb-1">
+                        {/* Kategori */}
+                        <div className="mb-8">
+                            <label className="block text-sm font-semibold text-gray-300 mb-2">
                                 Kategori
                             </label>
                             <select
-                                value={data.category_id || ""} // tambahkan || ''
+                                value={data.category_id}
                                 onChange={(e) =>
                                     setData("category_id", e.target.value)
                                 }
-                                className="w-full border rounded-lg px-4 py-2"
-                                required
+                                className="w-full bg-gray-950 border border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 text-white rounded-2xl px-6 py-4 transition-all"
                             >
-                                <option value="">-- Pilih Kategori --</option>
-                                {categories.map((category) => (
-                                    <option
-                                        key={category.id}
-                                        value={category.id}
-                                    >
-                                        {category.name}
+                                {categories.map((cat) => (
+                                    <option key={cat.id} value={cat.id}>
+                                        {cat.name}
                                     </option>
                                 ))}
                             </select>
                             {errors.category_id && (
-                                <p className="text-red-500 text-sm mt-1">
+                                <p className="text-red-400 text-sm mt-2">
                                     {errors.category_id}
                                 </p>
                             )}
                         </div>
 
-                        <div className="flex gap-4 pt-4">
+                        {/* Buttons */}
+                        <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-700">
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                                className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-700 disabled:text-gray-400 text-white font-semibold px-8 py-3.5 rounded-2xl transition flex-1"
                             >
-                                Simpan Konten
+                                {processing
+                                    ? "Menyimpan..."
+                                    : "Simpan Perubahan"}
                             </button>
 
                             <Link
-                                href={route("mycontent.index")}
-                                className="bg-gray-300 hover:bg-gray-400 px-6 py-3 rounded-lg transition"
+                                href="/dashboard"
+                                className="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 font-semibold px-8 py-3.5 rounded-2xl transition text-center flex-1"
                             >
                                 Batal
                             </Link>

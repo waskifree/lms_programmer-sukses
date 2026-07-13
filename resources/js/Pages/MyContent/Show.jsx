@@ -2,39 +2,37 @@ import { Head, Link, usePage, router } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 export default function Show({ contents }) {
-    // Fungsi Kembali Pintar
     const goBack = () => {
-        // Cek dari mana user datang
         if (window.history.length > 1) {
-            window.history.back(); // Kembali ke halaman sebelumnya
+            window.history.back();
         } else {
-            // Fallback jika tidak ada history
-            router.get("/content");
+            router.get("/mycontent");
         }
     };
+
     return (
         <AuthenticatedLayout>
             <Head title={contents.title} />
 
-            <div className="py-6">
-                <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white shadow-sm rounded-lg overflow-hidden">
+            <div className="py-10 min-h-screen">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="bg-gray-900 border border-gray-700 rounded-3xl overflow-hidden shadow-2xl">
                         {/* Header */}
-                        <div className="px-6 py-4 border-b flex justify-between items-center bg-gray-50">
-                            <h1 className="text-2xl font-bold text-gray-800">
+                        <div className="px-8 py-6 border-b border-gray-700 flex justify-between items-center bg-warm-black">
+                            <h1 className="text-3xl font-bold text-white tracking-tight">
                                 {contents.title}
                             </h1>
                             <div className="flex gap-3">
                                 <Link
                                     href={`/mycontent/${contents.slug}/edit`}
-                                    className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
+                                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-2xl transition font-medium"
                                 >
                                     Edit
                                 </Link>
 
                                 <button
                                     onClick={goBack}
-                                    className="bg-gray-300 px-4 py-2 rounded-lg hover:bg-gray-400 transition"
+                                    className="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 px-5 py-2.5 rounded-2xl transition font-medium"
                                 >
                                     Kembali
                                 </button>
@@ -42,52 +40,62 @@ export default function Show({ contents }) {
                         </div>
 
                         {/* Konten Detail */}
-                        <div className="p-6 space-y-6">
+                        <div className="p-8 space-y-8 bg-warm-black">
+                            {/* Deskripsi */}
                             <div>
-                                <h3 className="text-sm font-medium text-gray-500 mb-1">
+                                <h3 className="text-sm font-semibold text-gray-400 mb-2">
                                     Deskripsi
                                 </h3>
-                                <p className="text-gray-700">
-                                    {contents.description || "-"}
+                                <p className="text-gray-200 leading-relaxed">
+                                    {contents.description ||
+                                        "Tidak ada deskripsi"}
                                 </p>
                             </div>
 
+                            {/* Kategori */}
                             <div>
-                                <h3 className="text-sm font-medium text-gray-500 mb-1">
+                                <h3 className="text-sm font-semibold text-gray-400 mb-2">
                                     Kategori
                                 </h3>
-                                <span className="inline-block    py-1 rounded-full text-sm">
-                                    {contents.category?.name || "-"}
+                                <span className="inline-block bg-gray-900 text-emerald-400 px-4 py-1.5 rounded-2xl text-sm font-medium">
+                                    {contents.category?.name || "Uncategorized"}
                                 </span>
                             </div>
 
+                            {/* Isi Konten */}
                             <div>
-                                <h3 className="text-sm font-medium text-gray-500 mb-2">
+                                <h3 className="text-sm font-semibold text-gray-400 mb-3">
                                     Isi Konten
                                 </h3>
-                                <div className="prose max-w-none border rounded-lg p-6 bg-gray-50">
+                                <div className="prose prose-invert max-w-none bg-gray-900 border border-gray-700 rounded-2xl p-8 text-gray-200 leading-relaxed">
                                     {contents.paragraph}
                                 </div>
                             </div>
 
+                            {/* Gambar */}
                             {contents.image && (
                                 <div>
-                                    <h3 className="text-sm font-medium text-gray-500 mb-2">
+                                    <h3 className="text-sm font-semibold text-gray-400 mb-3">
                                         Gambar
                                     </h3>
                                     <img
                                         src={`/storage/${contents.image}`}
                                         alt={contents.title}
-                                        className="max-w-full rounded-lg shadow"
+                                        className="max-w-full rounded-2xl shadow-xl border border-gray-700"
                                     />
                                 </div>
                             )}
 
-                            <div className="pt-4 border-t text-sm text-gray-500">
+                            {/* Metadata */}
+                            <div className="pt-6 border-t border-gray-700 text-sm text-gray-400">
                                 Dibuat pada:{" "}
                                 {new Date(
                                     contents.created_at,
-                                ).toLocaleDateString("id-ID")}
+                                ).toLocaleDateString("id-ID", {
+                                    day: "numeric",
+                                    month: "long",
+                                    year: "numeric",
+                                })}
                             </div>
                         </div>
                     </div>

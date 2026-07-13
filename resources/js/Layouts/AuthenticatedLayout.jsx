@@ -1,38 +1,64 @@
+import React, { useState, useEffect } from "react";
+import { Link, usePage, router } from "@inertiajs/react";
+
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
-import { Link, usePage } from "@inertiajs/react";
-import { useState } from "react";
+
+import Sidebar from "@/Components/Sidebar";
 
 export default function AuthenticatedLayout({ header, children }) {
-    const { auth } = usePage().props;
-    const user = auth.user;
+    const { props } = usePage();
+    const auth = props.auth || {};
+    const user = auth.user || props.user || {};
+    const { filters = {} } = props;
+
     const isAdmin = auth.user?.isAdmin || false;
 
+    const [search, setSearch] = useState(filters.search || "");
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
-    return (
-        <div className="min-h-screen" style={{ backgroundColor: "#313647" }}>
-            {/* Navbar */}
-            <nav className="border-b border-gray-700">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex h-16 justify-between items-center">
-                        {/* Logo + Navigation */}
-                        <div className="flex items-center">
-                            <div className="flex shrink-0 items-center">
-                                <Link href="/">
-                                    <ApplicationLogo className="block h-9 w-auto fill-emerald-400" />
-                                </Link>
-                            </div>
+    // Auto search dengan debounce
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            if (window.location.pathname === "/dashboard") {
+                router.get(
+                    "/dashboard",
+                    { search },
+                    {
+                        preserveState: true,
+                        preserveScroll: true,
+                        replace: true,
+                    },
+                );
+            }
+        }, 300);
 
-                            <div className="hidden sm:flex space-x-8 ml-10">
+        return () => clearTimeout(timeout);
+    }, [search]);
+
+    return (
+        <div className="flex min-h-screen bg-[#0f172a] text-slate-200">
+            {/* Sidebar */}
+            <Sidebar user={user} isAdmin={isAdmin} />
+
+            {/* Main Area */}
+            <div className="flex-1 ml-64 flex flex-col">
+                {/* Top Navbar */}
+                <nav className="bg-[#1e2937] border-b border-slate-700 px-6 py-4">
+                    <div className="flex items-center justify-between gap-6">
+                        {/* Left Side */}
+                        <div className="flex items-center gap-10">
+                            <Link href="/">
+                                <ApplicationLogo className="block h-9 w-auto fill-emerald-400" />
+                            </Link>
+
+                            <div className="hidden md:flex items-center gap-8">
                                 <NavLink
                                     href={route("dashboard")}
                                     active={route().current("dashboard")}
-                                    className="text-warm-white hover:text-emerald-400 px-3 py-2 transition-colors"
-                                    activeClassName="text-warm-white border-b-2 border-emerald-400 font-semibold"
                                 >
                                     For Your Page
                                 </NavLink>
@@ -43,8 +69,6 @@ export default function AuthenticatedLayout({ header, children }) {
                                         active={route().current(
                                             "content.index",
                                         )}
-                                        className="text-white hover:text-emerald-400 px-3 py-2 transition-colors text-base"
-                                        activeClassName="text-white border-b-2 border-emerald-400 font-semibold"
                                     >
                                         Content
                                     </NavLink>
@@ -54,8 +78,6 @@ export default function AuthenticatedLayout({ header, children }) {
                                         active={route().current(
                                             "mycontent.index",
                                         )}
-                                        className="text-white hover:text-emerald-400 px-3 py-2 transition-colors text-base"
-                                        activeClassName="text-white border-b-2 border-emerald-400 font-semibold"
                                     >
                                         My Content
                                     </NavLink>
@@ -66,8 +88,6 @@ export default function AuthenticatedLayout({ header, children }) {
                                         user: user.username,
                                     })}
                                     active={route().current("profile.show")}
-                                    className="text-white hover:text-emerald-400 px-3 py-2 transition-colors text-base"
-                                    activeClassName="text-white border-b-2 border-emerald-400 font-semibold"
                                 >
                                     Profile
                                 </NavLink>
@@ -75,38 +95,57 @@ export default function AuthenticatedLayout({ header, children }) {
                                 <NavLink
                                     href={route("users.index")}
                                     active={route().current("users.index")}
-                                    className="text-white hover:text-emerald-400 px-3 py-2 transition-colors text-base"
-                                    activeClassName="text-white border-b-2 border-emerald-400 font-semibold"
                                 >
                                     Users
                                 </NavLink>
                             </div>
                         </div>
 
-                        {/* User Dropdown */}
-                        <div className="hidden sm:flex sm:items-center">
+                        {/* Search Bar (Dipindah ke sini) */}
+                        <div className="flex-1 max-w-xl hidden md:block">
+                            <input
+                                type="text"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                placeholder="Cari judul, deskripsi, atau isi konten..."
+                                className="w-full bg-[#0f172a] text-white border border-gray-700 
+                                         rounded-2xl px-5 py-3 focus:outline-none focus:border-emerald-500 
+                                         focus:ring-2 focus:ring-emerald-500/30 transition-all duration-300
+                                         placeholder-gray-500"
+                            />
+                        </div>
+
+                        {/* Right Side */}
+                        <div className="flex items-center gap-4">
+                            {/* Avatar + Dropdown */}
+                            {user?.avatar ? (
+                                <img
+                                    src={`/storage/${user.avatar}`}
+                                    alt={user.name}
+                                    className="w-9 h-9 rounded-full object-cover border-2 border-emerald-500"
+                                    onError={(e) =>
+                                        (e.target.style.display = "none")
+                                    }
+                                />
+                            ) : (
+                                <div className="w-9 h-9 bg-slate-600 rounded-full flex items-center justify-center text-xl">
+                                    👤
+                                </div>
+                            )}
+
                             <Dropdown>
                                 <Dropdown.Trigger>
-                                    <button className="text-white flex items-center gap-3 rounded-2xl px-5 py-2 hover:bg-gray-700 transition-all text-warm-white font-medium">
-                                        {user.name}
-                                        <svg
-                                            className="h-5 w-5 text-gray-400"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 20 20"
-                                            fill="currentColor"
-                                        >
-                                            <path
-                                                fillRule="evenodd"
-                                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                clipRule="evenodd"
-                                            />
-                                        </svg>
+                                    <button className="flex items-center gap-2 text-white hover:bg-slate-700 px-4 py-2 rounded-xl transition-colors">
+                                        <span>{user.name}</span>
+                                        <span className="text-gray-400 text-sm">
+                                            ▼
+                                        </span>
                                     </button>
                                 </Dropdown.Trigger>
 
-                                <Dropdown.Content className="bg-[#1E2937] border border-gray-700 text-white">
+                                <Dropdown.Content align="right">
                                     <Dropdown.Link href={route("profile.edit")}>
-                                        Profile
+                                        Edit Profile
                                     </Dropdown.Link>
                                     <Dropdown.Link
                                         href={route("logout")}
@@ -117,75 +156,58 @@ export default function AuthenticatedLayout({ header, children }) {
                                     </Dropdown.Link>
                                 </Dropdown.Content>
                             </Dropdown>
-                        </div>
 
-                        {/* Mobile Button */}
-                        <div className="sm:hidden">
+                            {/* Mobile Menu Button */}
                             <button
                                 onClick={() =>
                                     setShowingNavigationDropdown(
                                         !showingNavigationDropdown,
                                     )
                                 }
-                                className="p-3 rounded-xl text-warm-white hover:bg-gray-700 hover:text-white transition-colors"
+                                className="md:hidden p-2 rounded-xl hover:bg-slate-700"
                             >
                                 <svg
+                                    xmlns="http://www.w3.org/2000/svg"
                                     className="h-6 w-6"
-                                    stroke="currentColor"
                                     fill="none"
                                     viewBox="0 0 24 24"
+                                    stroke="currentColor"
                                 >
                                     <path
-                                        className={
-                                            !showingNavigationDropdown
-                                                ? "inline-flex"
-                                                : "hidden"
-                                        }
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M4 6h16M4 12h16M4 18h16"
-                                    />
-                                    <path
-                                        className={
+                                        strokeWidth={2}
+                                        d={
                                             showingNavigationDropdown
-                                                ? "inline-flex"
-                                                : "hidden"
+                                                ? "M6 18L18 6M6 6h12v12"
+                                                : "M4 6h16M4 12h16M4 18h16"
                                         }
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M6 18L18 6M6 6l12 12"
                                     />
                                 </svg>
                             </button>
                         </div>
                     </div>
-                </div>
+                </nav>
 
                 {/* Mobile Menu */}
-                <div
-                    className={`${showingNavigationDropdown ? "block" : "hidden"} sm:hidden bg-[#1E2937] border-t border-gray-700 py-4`}
-                >
-                    <div className="px-6 space-y-2 text-warm-white">
-                        <ResponsiveNavLink
-                            href={route("dashboard")}
-                            active={route().current("dashboard")}
-                        >
-                            For Your Page
-                        </ResponsiveNavLink>
-                        {/* Tambahkan ResponsiveNavLink lain jika perlu */}
+                {showingNavigationDropdown && (
+                    <div className="md:hidden bg-[#1e2937] border-b border-slate-700 py-4 px-6 space-y-3">
+                        {/* Responsive links */}
                     </div>
-                </div>
-            </nav>
+                )}
 
-            {header && (
-                <header className="bg-[#1E2937] border-b border-gray-700">
-                    <div className="max-w-7xl mx-auto px-6 py-6">{header}</div>
-                </header>
-            )}
+                {/* Header */}
+                {header && (
+                    <header className="bg-[#1e2937] border-b border-slate-700 py-6">
+                        <div className="max-w-7xl mx-auto px-6">{header}</div>
+                    </header>
+                )}
 
-            <main>{children}</main>
+                {/* Main Content */}
+                <main className="flex-1 overflow-auto p-6 bg-[#0f172a]">
+                    {children}
+                </main>
+            </div>
         </div>
     );
 }

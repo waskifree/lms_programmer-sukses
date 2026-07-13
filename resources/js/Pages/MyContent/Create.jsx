@@ -1,7 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head } from "@inertiajs/react";
-import { usePage, Link, router } from "@inertiajs/react";
-import { useForm } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 
 export default function Create({ categories }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -12,6 +10,7 @@ export default function Create({ categories }) {
         image: null,
         category_id: "",
         slug: "",
+        visibility: "public", // ← Tambahan baru
     });
 
     const handleSubmit = (e) => {
@@ -19,23 +18,89 @@ export default function Create({ categories }) {
         post(route("mycontent.store"), { forceFormData: true });
     };
 
+    const visibilityOptions = [
+        {
+            value: "public",
+            label: "Public",
+            desc: "Semua orang bisa melihat",
+            icon: "🌍",
+        },
+        {
+            value: "followers",
+            label: "Hanya Followers",
+            desc: "Hanya pengikutmu yang bisa melihat",
+            icon: "👥",
+        },
+        {
+            value: "private",
+            label: "Private",
+            desc: "Hanya kamu yang bisa melihat (Notes)",
+            icon: "🔒",
+        },
+    ];
+
     return (
         <AuthenticatedLayout>
-            <Head title="Tambah Konten" />
-
-            <div className="py-6">
-                <div className="max-w-4xl mx-auto sm:px-6 lg:px-8">
-                    <h2 className="text-2xl font-bold mb-6">
-                        Tambah Konten Baru
-                    </h2>
+            <Head title="Tambah Konten Baru" />
+            <div className="py-10 min-h-screen">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex justify-between items-center mb-8">
+                        <div>
+                            <h2 className="text-3xl font-bold text-white">
+                                Tambah Konten Baru
+                            </h2>
+                            <p className="text-gray-400 mt-1">
+                                Buat dan publikasikan konten baru Anda
+                            </p>
+                        </div>
+                    </div>
 
                     <form
                         onSubmit={handleSubmit}
-                        className="bg-white shadow-sm rounded-lg p-6"
+                        className="border bg-warm-black border-gray-800 shadow-2xl rounded-3xl p-8"
                     >
+                        {/* === VISIBILITY / PRIVACY MENU === */}
+                        <div className="mb-8">
+                            <label className="block text-sm font-semibold text-gray-300 mb-3">
+                                Siapa yang boleh melihat konten ini?
+                            </label>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                {visibilityOptions.map((option) => (
+                                    <button
+                                        key={option.value}
+                                        type="button"
+                                        onClick={() =>
+                                            setData("visibility", option.value)
+                                        }
+                                        className={`p-6 rounded-2xl border-2 transition-all text-left ${
+                                            data.visibility === option.value
+                                                ? "border-emerald-500 bg-emerald-500/10"
+                                                : "border-gray-700 hover:border-gray-600 bg-gray-900"
+                                        }`}
+                                    >
+                                        <div className="text-3xl mb-3">
+                                            {option.icon}
+                                        </div>
+                                        <h3 className="font-semibold text-white text-lg">
+                                            {option.label}
+                                        </h3>
+                                        <p className="text-gray-400 text-sm mt-1">
+                                            {option.desc}
+                                        </p>
+                                    </button>
+                                ))}
+                            </div>
+                            {errors.visibility && (
+                                <p className="text-red-400 text-sm mt-2">
+                                    {errors.visibility}
+                                </p>
+                            )}
+                        </div>
+
                         {/* Title */}
-                        <div className="mb-4">
-                            <label className="block text-sm font-medium mb-1">
+                        <div className="mb-6">
+                            <label className="block text-sm font-semibold text-gray-300 mb-2">
                                 Judul Konten
                             </label>
                             <input
@@ -44,32 +109,39 @@ export default function Create({ categories }) {
                                 onChange={(e) =>
                                     setData("title", e.target.value)
                                 }
-                                className="w-full border rounded-lg px-4 py-2"
+                                className="w-full bg-gray-900 border border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 text-white rounded-2xl px-6 py-4 transition-all placeholder-gray-400"
+                                placeholder="Masukkan judul konten..."
                             />
                             {errors.title && (
-                                <p className="text-red-500 text-sm">
+                                <p className="text-red-400 text-sm mt-1">
                                     {errors.title}
                                 </p>
                             )}
                         </div>
 
                         {/* Description */}
-                        <div className="mb-4">
-                            <label className="block text-sm font-medium mb-1">
-                                Deskripsi
+                        <div className="mb-6">
+                            <label className="block text-sm font-semibold text-gray-300 mb-2">
+                                Deskripsi Singkat
                             </label>
                             <textarea
                                 value={data.description}
                                 onChange={(e) =>
                                     setData("description", e.target.value)
                                 }
-                                className="w-full border rounded-lg px-4 py-2 h-24"
+                                className="w-full bg-gray-900 border border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 text-white rounded-2xl px-6 py-4 h-28 transition-all placeholder-gray-400"
+                                placeholder="Deskripsi singkat tentang konten..."
                             />
+                            {errors.description && (
+                                <p className="text-red-400 text-sm mt-1">
+                                    {errors.description}
+                                </p>
+                            )}
                         </div>
 
                         {/* Paragraph / Isi Konten */}
-                        <div className="mb-4">
-                            <label className="block text-sm font-medium mb-1">
+                        <div className="mb-6">
+                            <label className="block text-sm font-semibold text-gray-300 mb-2">
                                 Isi Konten
                             </label>
                             <textarea
@@ -77,21 +149,27 @@ export default function Create({ categories }) {
                                 onChange={(e) =>
                                     setData("paragraph", e.target.value)
                                 }
-                                className="w-full border rounded-lg px-4 py-2 h-48"
+                                className="w-full bg-gray-900 border border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 text-white rounded-2xl px-6 py-4 h-56 transition-all placeholder-gray-400"
+                                placeholder="Tulis isi konten lengkap di sini..."
                             />
+                            {errors.paragraph && (
+                                <p className="text-red-400 text-sm mt-1">
+                                    {errors.paragraph}
+                                </p>
+                            )}
                         </div>
 
-                        {/* Type */}
-                        <div className="mb-4">
-                            <label className="block text-sm font-medium mb-1">
+                        {/* Category */}
+                        <div className="mb-6">
+                            <label className="block text-sm font-semibold text-gray-300 mb-2">
                                 Kategori
                             </label>
                             <select
-                                value={data.category_id || ""} // tambahkan || ''
+                                value={data.category_id || ""}
                                 onChange={(e) =>
                                     setData("category_id", e.target.value)
                                 }
-                                className="w-full border rounded-lg px-4 py-2"
+                                className="w-full bg-gray-900 border border-gray-700 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 text-white rounded-2xl px-6 py-4 transition-all"
                                 required
                             >
                                 <option value="">-- Pilih Kategori --</option>
@@ -105,23 +183,24 @@ export default function Create({ categories }) {
                                 ))}
                             </select>
                             {errors.category_id && (
-                                <p className="text-red-500 text-sm mt-1">
+                                <p className="text-red-400 text-sm mt-1">
                                     {errors.category_id}
                                 </p>
                             )}
                         </div>
 
-                        <div className="flex gap-4 mt-6">
+                        {/* Buttons */}
+                        <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-700">
                             <button
                                 type="submit"
                                 disabled={processing}
-                                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                                className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-700 disabled:text-gray-400 text-white font-semibold px-8 py-3.5 rounded-2xl transition flex-1"
                             >
-                                Simpan Konten
+                                {processing ? "Menyimpan..." : "Simpan Konten"}
                             </button>
                             <Link
                                 href="/mycontent"
-                                className="bg-gray-300 px-6 py-3 rounded-lg hover:bg-gray-400"
+                                className="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 font-semibold px-8 py-3.5 rounded-2xl transition text-center flex-1"
                             >
                                 Batal
                             </Link>

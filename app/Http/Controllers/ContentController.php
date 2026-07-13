@@ -44,6 +44,7 @@ class ContentController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'category_id' => 'nullable|exists:categories,id',
+            'visibility' => 'required|in:public,followers,private',
             'description' => 'nullable|string',
             'paragraph' => 'nullable|string',
             'image' => 'nullable|image|max:2048',
@@ -55,6 +56,7 @@ class ContentController extends Controller
         $content = new Content();
         $content->title = $request->title;
         $content->category_id = $request->category_id;
+        $content->visibility = $request->visibility;
         $content->description = $request->description;
         $content->paragraph = $request->paragraph;
         $content->created_by = Auth::id();
@@ -104,6 +106,7 @@ class ContentController extends Controller
         
         $request->validate([
         'title'       => 'required|string|max:255',
+        'visibility'  => 'required|in:public,followers,private',
         'description' => 'nullable|string',
         'paragraph'   => 'required|string',
         'category_id' => 'nullable|exists:categories,id',
@@ -111,9 +114,10 @@ class ContentController extends Controller
 
 
     $content->title = $request->title;
+    $content->visibility = $request->visibility;
+    $content->category_id = $request->category_id;
     $content->description = $request->description;
     $content->paragraph = $request->paragraph;
-    $content->category_id = $request->category_id;
     $content->save();
 
     return redirect()->route('content.index')

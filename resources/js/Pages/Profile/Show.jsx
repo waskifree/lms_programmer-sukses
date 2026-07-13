@@ -29,7 +29,7 @@ export default function Show() {
                                 <div className="w-28 h-28 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center text-5xl shadow overflow-hidden">
                                     {user.avatar ? (
                                         <img
-                                            src={user.avatar}
+                                            src={`/storage/${user.avatar}`}
                                             alt={user.name}
                                             className="w-full h-full object-cover"
                                         />
@@ -49,20 +49,29 @@ export default function Show() {
                                     {/* Stats Followers */}
                                     <div className="flex gap-6 mt-4 text-sm">
                                         <div>
-                                            <span className="font-semibold text-white text-lg">
+                                            <span
+                                                className="font-semibold text-white text-lg"
+                                                href={`/profile/${user.username}/followers`}
+                                            >
                                                 {user.followers_count || 0}
                                             </span>
-                                            <span className="text-gray-400 ml-1">
+                                            <a
+                                                className="text-gray-400 ml-1"
+                                                href={`/profile/${user.username}/followers`}
+                                            >
                                                 Followers
-                                            </span>
+                                            </a>
                                         </div>
                                         <div>
                                             <span className="font-semibold text-white text-lg">
                                                 {user.following_count || 0}
                                             </span>
-                                            <span className="text-gray-400 ml-1">
+                                            <a
+                                                className="text-gray-400 ml-1"
+                                                href={`/profile/${user.username}/following`}
+                                            >
                                                 Following
-                                            </span>
+                                            </a>
                                         </div>
                                     </div>
                                 </div>

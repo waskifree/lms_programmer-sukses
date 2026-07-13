@@ -39,12 +39,12 @@ export default function Index() {
                         <h2 className="text-2xl font-bold text-white">
                             All Contents
                         </h2>
-                        <Link
+                        <a
                             href={route("mycontent.create")}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg transition"
+                            className="bg-blue hover:bg-blue-700 text-white px-5 py-2 rounded-lg transition"
                         >
                             + Create New Content
-                        </Link>
+                        </a>
                     </div>
 
                     {flash?.success && (

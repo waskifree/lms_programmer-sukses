@@ -7,6 +7,7 @@ use App\Http\Controllers\CategoryController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NoteController;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -27,6 +28,8 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard/friends', [DashboardController::class, 'DashFriends'])
+        ->name('dashboard.friends');
      // Profil Publik
     Route::get('/profile/{user:username}', [ProfileController::class, 'show'])
          ->name('profile.show');
@@ -43,17 +46,23 @@ Route::middleware('auth')->group(function () {
     // 4. Route Follow/Unfollow
     Route::post('/profile/{user:username}/follow', [ProfileController::class, 'follow'])->name('profile.follow');
     Route::post('/profile/{user:username}/unfollow', [ProfileController::class, 'unfollow'])->name('profile.unfollow');
-    route::post('/profile/{user:username}/toggle-follow', [ProfileController::class, 'toggleFollow'])->name('profile.toggle-follow');
+    Route::post('/profile/{user:username}/toggle-follow', [ProfileController::class, 'toggleFollow'])->name('profile.toggle-follow');
+
+    Route::get('/profile/{user:username}/followers', [ProfileController::class, 'followers'])->name('profile.followers');
+    Route::get('/profile/{user:username}/following', [ProfileController::class, 'following'])->name('profile.following');
 
     Route::post('/content/{content:slug}/like', [ContentController::class, 'like'])->name('content.like');
     Route::post('/content/{content:slug}/comment', [ContentController::class, 'comment'])->name('content.comment');
 
+    // 5. Route notes
+    Route::get('/notes', [NoteController::class, 'index'])
+        ->name('notes.index');
+
    
    
+
 });
-
-
-Route::middleware(['auth' => 'role:admin'])->group(function () {
+Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('content', ContentController::class)->except(['show']); 
     Route::resource('category', CategoryController::class);
     Route::get('/category/{category:slug}', [CategoryController::class, 'show'])->name('category.show');

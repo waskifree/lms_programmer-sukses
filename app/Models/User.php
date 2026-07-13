@@ -11,7 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'username', 'password'])]
+#[Fillable(['name', 'email', 'username', 'password', 'avatar', 'bio'])]
 #[Hidden(['password', 'remember_token'])]   
 class User extends Authenticatable
 {
@@ -34,6 +34,11 @@ class User extends Authenticatable
     public function contents()
     {
         return $this->hasMany(Content::class, 'created_by');
+    }
+
+    public function isAdmin()
+    {
+        return $this->roles?->pluck('name')->contains('admin') ?? false;
     }
 
     public function following()

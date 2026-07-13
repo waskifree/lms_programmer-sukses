@@ -58,9 +58,15 @@ export default function Index({ users }) {
                                              transition-all duration-300 cursor-pointer"
                                 >
                                     <div className="flex items-center gap-4">
-                                        <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center text-3xl shadow">
-                                            👤
-                                        </div>
+                                        {user.avatar ? (
+                                            <img
+                                                src={`/storage/${user.avatar}`}
+                                                alt={user.name}
+                                                className="w-9 h-9 rounded-full object-cover "
+                                            />
+                                        ) : (
+                                            "👤"
+                                        )}
                                         <div>
                                             <h3 className="font-semibold text-xl text-white">
                                                 {user.name}
